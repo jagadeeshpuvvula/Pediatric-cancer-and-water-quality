@@ -7,8 +7,8 @@ library(effects)
 library(ggplot2)
 
 #load data
-atr_PCA <- read.csv("C:/Users/jagad/Desktop/final_ca_analysis2.csv", 
-                    sep= "," , header = TRUE) 
+atr_PCA <- read.csv("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/final_ca_analysis2.csv", 
+                    sep= "," , header = TRUE ) 
 
 #data formatting
 fvar <- c( "Ground_cat", "Surface_cat")
@@ -18,7 +18,7 @@ str(atr_PCA)
 
 ################### NEGATIVE BINOMIAL REG MODEL GROUND ATRAZINE AND PED CANCER ################
 #negative binomial model with offset term to adjust for population density
-fit_gr <- glmer.nb(ca_count ~ Ground_cat+ (1|Name), data=atr_PCA)
+fit_gr <- glmer.nb(ca_count ~ Ground_cat+ (1|Total_pop), data=atr_PCA)
 #summary(fit_gr)
 #plot(fit_gr)
 IRR <- fixef(fit_gr)
@@ -33,7 +33,7 @@ ggplot()+geom_pointrange(data=d, mapping=aes(x=Atrazine_Ground_concentration_cat
   coord_cartesian(ylim=c(0,14))
 
 ################### NEGATIVE BINOMIAL REG MODEL Sur ATRAZINE AND PED CANCER ################
-fit_sur <- glmer.nb(ca_count ~ Surface_cat+ (1|Name), data=atr_PCA)
+fit_sur <- glmer.nb(ca_count ~ Surface_cat+ (1|Total_pop), data=atr_PCA)
 summary(fit_sur)
 IRR <- fixef(fit_sur)
 confnitfixed <- confint(fit_sur, parm = "beta_", method = "Wald")
