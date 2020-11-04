@@ -59,4 +59,3 @@ ggplot()+geom_pointrange(data=d, mapping=aes(x=Atrazine_concentration_quantile_c
   geom_hline(yintercept = 1, linetype = 2)+theme(legend.position="bottom")+
   facet_grid(cols = vars(s), scales="free_x")+
   scale_x_discrete(limits=c("Medium-low","Medium","High"))
-
