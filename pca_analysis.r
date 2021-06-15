@@ -7,8 +7,9 @@ library(effects)
 library(ggplot2)
 
 #load data
-atr_PCA <- read.csv("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/final_ca_analysis2.csv", 
-                    sep= "," , header = TRUE ) 
+atr_PCA <- read.csv("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/PCA_analysis_withSVI.csv", 
+                    sep= "," , header = TRUE )
+
 
 #data formatting
 fvar <- c( "Ground_cat", "Surface_cat")
@@ -25,6 +26,10 @@ IRR <- fixef(fit_gr)
 confnitfixed <- confint(fit_gr, parm = "beta_", method = "Wald")
 summary <- exp(cbind(IRR, confnitfixed))
 summary
+
+
+
+summary(fit_gr)
 
 d=data.frame(Atrazine_Ground_concentration_category=c("Medium-low","Medium","High"),
              IRR=c(3.56, 3.43, 4.64),lower=c(1.45, 1.29, 1.81), upper=c(8.72, 9.09, 11.85))
@@ -59,3 +64,32 @@ ggplot()+geom_pointrange(data=d, mapping=aes(x=Atrazine_concentration_quantile_c
   geom_hline(yintercept = 1, linetype = 2)+theme(legend.position="bottom")+
   facet_grid(cols = vars(s), scales="free_x")+
   scale_x_discrete(limits=c("Low","Medium","High"))
+
+
+##################################################################################
+##################################################################################
+##################################################################################
+#with SVI themes 
+# 1: Percentile ranking for Socioeconomic theme
+# 2: Percentile ranking for Household Composition
+# 3: Percentile ranking for Minority Status/Language theme
+# 4: Percentile ranking for Housing/Transportation theme
+
+#using overall themes
+fit_gr <- glmer.nb(ca_count ~ Surface_cat+ Avg..R.Pl.Theme1+
+                     Avg..R.Pl.Theme2+Avg..R.Pl.Theme3+Avg..R.Pl.Theme4+
+                     (1|Total_Pead_pop), data=atr_PCA)
+
+#using component of themes
+
+#theme 3:
+fit_sur <- glmer.nb(ca_count ~ Ground_cat+ Avg..Pl.Minority + Avg..E.Pl.Limeng+
+                     Avg..P.Age65+Avg..P.Age65+Avg..P.Sngprnt+
+                     (1|Total_Pead_pop), data=atr_PCA)
+
+#theme 2: 
+fit_gr <- glmer.nb(ca_count ~ atr_PCA$Ground_cat+
+                     (1|Total_Pead_pop), data=atr_PCA)
+
+
+summary(fit_gr)
