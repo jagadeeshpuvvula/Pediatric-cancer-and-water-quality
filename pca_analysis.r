@@ -88,8 +88,34 @@ fit_sur <- glmer.nb(ca_count ~ Ground_cat+ Avg..Pl.Minority + Avg..E.Pl.Limeng+
                      (1|Total_Pead_pop), data=atr_PCA)
 
 #theme 2: 
-fit_gr <- glmer.nb(ca_count ~ atr_PCA$Ground_cat+
+fit_gr <- glmer.nb(ca_count ~ atr_PCA$Avg..Pl.Groupq+
                      (1|Total_Pead_pop), data=atr_PCA)
+IRR <- fixef(fit_gr)
+confnitfixed <- confint(fit_gr, parm = "beta_", method = "Wald")
+summary1 <- exp(cbind(IRR, confnitfixed))
+summary1
 
 
-summary(fit_gr)
+res<-read.csv("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/SVI_covariate_estimates.csv",
+             header=T, fileEncoding="UTF-8-BOM")
+
+library(ggplot2)
+cbbPalette <- c("#000000", "#999999")
+
+ggplot(res, aes(x = variable, y = or, ymin = lcl, ymax = ucl)) + 
+  geom_pointrange(aes(), 
+                  position=position_dodge(width=0.5),size = 0.6) + 
+  ylab("Incidence rate ratio [95% CI]") +
+  geom_hline(aes(yintercept = 1)) + 
+  scale_colour_manual(values=cbbPalette) + 
+  ggtitle("Sensitivity of SVI variables")+
+  xlab("SVI variables")+
+  theme(legend.position = "bottom")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(text=element_text(size=15,  family="Arial Black"))+
+  theme(axis.text = element_text(size = 15, family="Arial Black"))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_y_continuous(breaks = seq(0, 7, 1),limits=c(0, 7))+
+  theme(panel.border = element_blank(),panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
