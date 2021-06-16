@@ -115,7 +115,7 @@ ggplot(res, aes(x = variable, y = or, ymin = lcl, ymax = ucl)) +
   theme(text=element_text(size=15,  family="Arial Black"))+
   theme(axis.text = element_text(size = 15, family="Arial Black"))+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  scale_y_continuous(breaks = seq(0, 7, 1),limits=c(0, 7))+
+  scale_y_continuous(breaks = seq(0, 16, 1),limits=c(0, 16))+
   theme(panel.border = element_blank(),panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
