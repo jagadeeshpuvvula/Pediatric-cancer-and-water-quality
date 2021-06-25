@@ -103,7 +103,7 @@ library(ggplot2)
 cbbPalette <- c("#000000", "#999999")
 
 ggplot(res, aes(x = variable, y = or, ymin = lcl, ymax = ucl)) + 
-  geom_pointrange(aes(), 
+  geom_pointrange(aes(col = factor(Geography)), 
                   position=position_dodge(width=0.5),size = 0.6) + 
   ylab("Incidence rate ratio [95% CI]") +
   geom_hline(aes(yintercept = 1)) + 
@@ -118,4 +118,22 @@ ggplot(res, aes(x = variable, y = or, ymin = lcl, ymax = ucl)) +
   scale_y_continuous(breaks = seq(0, 16, 1),limits=c(0, 16))+
   theme(panel.border = element_blank(),panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
+
+
+#######################################################333
+############################################################
+# PCA SVI ANALYSIS
+
+PC_SVI <- read.csv("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/PCA_SVI_working/PCA_SVI_analysis.csv", 
+                    sep= "," , header = TRUE )
+
+ls(PC_SVI)
+
+#theme 2: 
+fit_gr <- glmer.nb(PCA_count ~ PC_SVI$E_PL_group+
+                     (1|ped_popln), data=PC_SVI)
+IRR <- fixef(fit_gr)
+confnitfixed <- confint(fit_gr, parm = "beta_", method = "Wald")
+summary1 <- exp(cbind(IRR, confnitfixed))
+summary1
 
