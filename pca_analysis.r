@@ -124,18 +124,19 @@ ggsave("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/fig3.tiff", units="in", widt
 #using overall themes
 fit_gr <- glmer.nb(ca_count ~ Surface_cat+ Avg..R.Pl.Theme1+
                      Avg..R.Pl.Theme2+Avg..R.Pl.Theme3+Avg..R.Pl.Theme4+
-                     (1|ped_popln), data=atr_PCA)
+                     offset(1|Total_Pead_pop)+
+                     (1|HUC_code),, data=atr_PCA)
 
 #using component of themes
 
 #theme 3:
 fit_sur <- glmer.nb(ca_count ~ Ground_cat+ Avg..Pl.Minority + Avg..E.Pl.Limeng+
-                     Avg..P.Age65+Avg..P.Age65+Avg..P.Sngprnt+
-                     (1|Total_Pead_pop), data=atr_PCA)
+                     Avg..P.Age65+Avg..P.Age65+Avg..P.Sngprnt+offset(1|Total_Pead_pop)+
+                     (1|HUC_code), data=atr_PCA)
 
 #theme 2: 
 fit_gr <- glmer.nb(ca_count ~ atr_PCA$Avg..Pl.Groupq+
-                     (1|Total_Pead_pop), data=atr_PCA)
+                   offset(1|Total_Pead_pop)+(1|HUC_code), data=atr_PCA)
 IRR <- fixef(fit_gr)
 confnitfixed <- confint(fit_gr, parm = "beta_", method = "Wald")
 summary1 <- exp(cbind(IRR, confnitfixed))
