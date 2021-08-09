@@ -1,6 +1,6 @@
 #load libraries
 library(tidyverse)
-library(lme4)
+library(MASS)
 library(epiDisplay)
 
 #load data
@@ -18,8 +18,8 @@ str(atr_PCA)
 
 ################### NEGATIVE BINOMIAL REG MODEL GROUND ATRAZINE AND PED CANCER ################
 #negative binomial model with offset term to adjust for population density
-fit_gr <- glmer.nb(ca_count ~ Ground_cat+Avg..R.Pl.Themes+
-                     (1|Total_Pead_pop), data=atr_PCA)
+fit_gr <- glm.nb(ca_count ~ Ground_cat+Avg..R.Pl.Themes+
+                     offset(Total_Pead_pop), data=atr_PCA)
 
 #fit_gr <- glmer.nb(ca_count ~ Surface_cat+Avg..E.Pl.Unemp+Avg..Pl.Sngprnt+Avg..Pl.Minority+Avg..E.Pl.Limeng+
 #summary(fit_gr)
@@ -84,7 +84,7 @@ ggsave("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/fig3.tiff", units="in", widt
 #   coord_cartesian(ylim=c(0,14))
 # 
 # ################### NEGATIVE BINOMIAL REG MODEL Sur ATRAZINE AND PED CANCER ################
-# fit_sur <- glmer.nb(ca_count ~ Surface_cat+ (1|Total_pop), data=atr_PCA)
+# fit_sur <- glm.nb(ca_count ~ Surface_cat+ offset(Total_pop), data=atr_PCA)
 # summary(fit_sur)
 # IRR <- fixef(fit_sur)
 # confnitfixed <- confint(fit_sur, parm = "beta_", method = "Wald")
@@ -122,21 +122,19 @@ ggsave("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/fig3.tiff", units="in", widt
 # 4: Percentile ranking for Housing/Transportation theme
 
 #using overall themes
-fit_gr <- glmer.nb(ca_count ~ Surface_cat+ Avg..R.Pl.Theme1+
+fit_gr <- glm.nb(ca_count ~ Surface_cat+ Avg..R.Pl.Theme1+
                      Avg..R.Pl.Theme2+Avg..R.Pl.Theme3+Avg..R.Pl.Theme4+
-                     offset(1|Total_Pead_pop)+
-                     (1|HUC_code),, data=atr_PCA)
+                     offset(Total_Pead_pop), data=atr_PCA)
 
 #using component of themes
 
 #theme 3:
-fit_sur <- glmer.nb(ca_count ~ Ground_cat+ Avg..Pl.Minority + Avg..E.Pl.Limeng+
-                     Avg..P.Age65+Avg..P.Age65+Avg..P.Sngprnt+offset(1|Total_Pead_pop)+
-                     (1|HUC_code), data=atr_PCA)
+fit_sur <- glm.nb(ca_count ~ Ground_cat+ Avg..Pl.Minority + Avg..E.Pl.Limeng+
+                     Avg..P.Age65+Avg..P.Age65+Avg..P.Sngprnt+offset(Total_Pead_pop), data=atr_PCA)
 
 #theme 2: 
-fit_gr <- glmer.nb(ca_count ~ atr_PCA$Avg..Pl.Groupq+
-                   offset(1|Total_Pead_pop)+(1|HUC_code), data=atr_PCA)
+fit_gr <- glm.nb(ca_count ~ atr_PCA$Avg..Pl.Groupq+
+                   offset(Total_Pead_pop), data=atr_PCA)
 IRR <- fixef(fit_gr)
 confnitfixed <- confint(fit_gr, parm = "beta_", method = "Wald")
 summary1 <- exp(cbind(IRR, confnitfixed))
@@ -176,9 +174,9 @@ PC_SVI <- read_csv("C:/Users/jagad/Desktop/ATR_PEDCA_manuscript/PCA_SVI_working/
 ls(PC_SVI)
 
 #theme 2: 
-fit_gr <- glmer.nb(PCA_count ~ Ground_cat+Avg..E.Pl.Unemp+Avg..Pl.Sngprnt+Avg..Pl.Minority+
+fit_gr <- glm.nb(PCA_count ~ Ground_cat+Avg..E.Pl.Unemp+Avg..Pl.Sngprnt+Avg..Pl.Minority+
                      Avg..E.Pl.Limeng+
-                     (1|ped_popln), data=PC_SVI)
+                     offset(ped_popln), data=PC_SVI)
 IRR <- fixef(fit_gr)
 confnitfixed <- confint(fit_gr, parm = "beta_", method = "Wald")
 summary1 <- exp(cbind(IRR, confnitfixed))
